@@ -1,7 +1,7 @@
 // Uses Declarative syntax to run commands inside a container.
 pipeline {
 environment {
-        HARBOR_URL      = "harbor.harbor:443"
+        HARBOR_URL      = "\"harbor.harbor:443\""
         HARBOR_USER     = "admin"
         HARBOR_PASSWORD = "Kuberix1234@#\$"
         CI_PROJECT_PATH = "jwtest"
