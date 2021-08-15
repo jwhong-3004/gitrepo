@@ -1,7 +1,7 @@
 // Uses Declarative syntax to run commands inside a container.
 pipeline {
 environment {
-        HARBOR_URL      = "10.10.10.149:32002"
+        HARBOR_URL      = "harbor.harbor:443"
         HARBOR_USER     = "admin"
         HARBOR_PASSWORD = "Kuberix1234@#\$"
         CI_PROJECT_PATH = "jwtest"
@@ -19,6 +19,13 @@ spec:
     args:
     - 99d
     image: 10.10.10.149:32002/jwtest/kaniko-project/executor:debug
+    volumeMounts:
+    - name: ca-key
+      mountPath: /kaniko/ssl/certs/
+  volumes:
+  - name: ca-key
+    configMap:
+      name: test
   imagePullSecrets:
   - name: test2
   nodeName: worker3
@@ -29,8 +36,9 @@ spec:
         stage('build') {
             steps {
                 container('build') {
-                    sh 'mkdir -p /kaniko/.docker'
+                    sh 'cat /kaniko/ssl/certs/additional-ca-cert-bundle.crt'
                     sh 'echo "{\"auths\":{\"$HARBOR_URL\":{\"username\":\"$HARBOR_USER\",\"password\":\"$HARBOR_PASSWORD\"}}}" > /kaniko/.docker/config.json'
+                    sh 'cat /kaniko/.docker/config.json'
                     sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination $HARBOR_URL/$CI_PROJECT_PATH/test:test'
                 }
             }
