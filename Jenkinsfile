@@ -22,10 +22,15 @@ spec:
     volumeMounts:
     - name: ca-key
       mountPath: /kaniko/ssl/certs/
+    - name: dockerjson
+      mountPath: kaniko/.docker/
   volumes:
   - name: ca-key
     configMap:
       name: test
+  - name: dockerjson
+    configMap:
+      name: test2      
   imagePullSecrets:
   - name: test2
   nodeName: worker3
@@ -37,7 +42,6 @@ spec:
             steps {
                 container('build') {
                     sh 'cat /kaniko/ssl/certs/additional-ca-cert-bundle.crt'
-                    sh 'echo "{\"auths\":{\"$HARBOR_URL\":{\"auth\":\"$(echo -n ${HARBOR_USER}:${HARBOR_PASSWORD} | base64)\"}}}" > /kaniko/.docker/config.json'
                     sh 'cat /kaniko/.docker/config.json'
                     sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination $HARBOR_URL/$CI_PROJECT_PATH/test:test'
                 }
