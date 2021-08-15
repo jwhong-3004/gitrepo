@@ -1,5 +1,11 @@
 // Uses Declarative syntax to run commands inside a container.
 pipeline {
+environment {
+        HARBOR_URL       = "10.10.10.149:32002"
+        HARBOR_USER      = "admin"
+        HARBOR_PASSWORD  = "Kuberix11234@#$"
+        $CI_PROJECT_PATH = "jwtest"
+    }
     agent {
         kubernetes {
             yaml '''
@@ -19,6 +25,8 @@ spec:
     - sleep
     args:
     - 1000
+  - name: build
+    image: 10.10.10.149:32002/jwtest/kaniko-project/executor:debug
   imagePullSecrets:
   - name: test2
   nodeName: worker3
@@ -27,7 +35,7 @@ spec:
         }
     }
     stages {
-        stage('build') {
+        stage('hostname') {
             steps {
                 container('docker') {
                     sh 'hostname'
@@ -41,5 +49,10 @@ spec:
                 }
             }
         }
+        stage('build') {
+            steps {
+                container('build') {
+                    sh 'echo "{\"auths\":{\"$HARBOR_URL\":{\"username\":\"$HARBOR_USER\",\"password\":\"$HARBOR_PASSWORD\"}}}" > /kaniko/.docker/config.json'
+                    sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination $HARBOR_URL/$CI_PROJECT_PATH/test:test'
     }
 }
