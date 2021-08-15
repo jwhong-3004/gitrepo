@@ -43,7 +43,7 @@ spec:
                 container('build') {
                     sh 'cat /kaniko/ssl/certs/additional-ca-cert-bundle.crt'
                     sh 'cat /kaniko/.docker/config.json'
-                    sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination harbor.harbor:443/$CI_PROJECT_PATH/test:test'
+                    sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination 10.10.10.149:32002/$CI_PROJECT_PATH/test:test'
                 }
             }
         }
