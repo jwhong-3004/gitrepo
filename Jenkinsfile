@@ -20,17 +20,23 @@ spec:
     - 99d
     image: 10.10.10.149:32002/jwtest/kaniko-project/executor:debug
     volumeMounts:
-    - name: ca-key
+    - name: ca-crt
       mountPath: /kaniko/ssl/certs/
     - name: dockerjson
-      mountPath: kaniko/.docker/
+      mountPath: /kaniko/.docker/
   volumes:
-  - name: ca-key
-    configMap:
-      name: test
+  - name: ca-crt
+    secret:
+      secretName: pipsecret
+      items:
+      - key: additional-ca-cert-bundle.crt
+        path: "additional-ca-cert-bundle.crt"
   - name: dockerjson
-    configMap:
-      name: test2      
+    secret:
+      secretName: pipsecret
+      items:
+      - key: config.json
+        path: "config.json"
   imagePullSecrets:
   - name: test2
   nodeName: worker3
