@@ -1,10 +1,10 @@
 // Uses Declarative syntax to run commands inside a container.
 pipeline {
 environment {
-        HARBOR_URL       = "10.10.10.149:32002"
-        HARBOR_USER      = "admin"
-        HARBOR_PASSWORD  = "Kuberix11234@#$"
-        $CI_PROJECT_PATH = "jwtest"
+        HARBOR_URL      = "10.10.10.149:32002"
+        HARBOR_USER     = "admin"
+        HARBOR_PASSWORD = "Kuberix1234@#$"
+        CI_PROJECT_PATH = "jwtest"
     }
     agent {
         kubernetes {
