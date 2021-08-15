@@ -37,7 +37,7 @@ spec:
             steps {
                 container('build') {
                     sh 'cat /kaniko/ssl/certs/additional-ca-cert-bundle.crt'
-                    sh 'echo "{\"auths\":{\"$HARBOR_URL\":{\"username\":\"$HARBOR_USER\",\"password\":\"$HARBOR_PASSWORD\"}}}" > /kaniko/.docker/config.json'
+                    sh 'echo "{\"auths\":{\"$HARBOR_URL\":{\"auth\":\"$(echo -n ${HARBOR_USER}:${HARBOR_PASSWORD} | base64)\"}}}" > /kaniko/.docker/config.json'
                     sh 'cat /kaniko/.docker/config.json'
                     sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination $HARBOR_URL/$CI_PROJECT_PATH/test:test'
                 }
