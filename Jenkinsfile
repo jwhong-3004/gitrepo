@@ -3,7 +3,7 @@ pipeline {
 environment {
         HARBOR_URL      = "10.10.10.149:32002"
         HARBOR_USER     = "admin"
-        HARBOR_PASSWORD = "Kuberix1234\@\#\$"
+        HARBOR_PASSWORD = "Kuberix1234@#\$"
         CI_PROJECT_PATH = "jwtest"
     }
     agent {
