@@ -14,6 +14,10 @@ kind: Pod
 spec:
   containers:
   - name: build
+    command:
+    - sleep
+    args:
+    - 99d
     image: 10.10.10.149:32002/jwtest/kaniko-project/executor:debug
   imagePullSecrets:
   - name: test2
