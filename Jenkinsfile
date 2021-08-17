@@ -24,25 +24,34 @@ spec:
       mountPath: /kaniko/ssl/certs/
     - name: dockerjson
       mountPath: /kaniko/.docker/
-  - name: test
+  - name: git
     command:
-    - /bin/sh
-    - -c
-    - sleep 10000
-    image: 10.10.10.149:32002/jwtest/docker:stable
+    - sleep
+    args:
+    - 99d
+    image: 10.10.10.149:32002/jwtest/alpine:git
+    volumeMounts:
+    - name: pri-key
+      mountPath: /root/.ssh/
   volumes:
   - name: ca-crt
     secret:
-      secretName: pipsecret
+      secretName: pipesecret
       items:
       - key: additional-ca-cert-bundle.crt
         path: "additional-ca-cert-bundle.crt"
   - name: dockerjson
     secret:
-      secretName: pipsecret
+      secretName: pipesecret
       items:
       - key: config.json
         path: "config.json"
+  - name: pri-key
+    secret:
+      secretName: pipesecret
+      items:
+      - key: "id_rsa"
+        path: "id_rsa"
   imagePullSecrets:
   - name: test2
   nodeName: worker3
@@ -61,10 +70,14 @@ spec:
                 }
             }
         }
-        stage('docker') {
+        stage('git') {
             steps {
-                container('test') {
-                    sh 'ls -l'
+                container('git') {
+                    sh 'ssh-keyget -H github.com > /root/.ssh/known_hosts'
+                    sh 'git clone git@github.com:jwhong-3004/gitrepo.git'
+                    sh 'chmod 600 /root/.ssh/id_rsa'
+                    sh 'git config --global user.name jwhong'
+                    sh 'git config --global user.email jwhong@example.com'
                 }
             }
         }
