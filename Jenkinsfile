@@ -29,10 +29,16 @@ spec:
     - sleep
     args:
     - 99d
-    image: 10.10.10.149:32002/jwtest/alpine:git
+    image: 10.10.10.149:32002/jwtest/alpine:git:latest
     volumeMounts:
     - name: pri-key
       mountPath: /root/.ssh/
+  - name: git
+    command:
+    - sleep
+    args:
+    - 99d
+    image: 10.10.10.149:32002/jwtest/alpine/helm:latest
   volumes:
   - name: ca-crt
     secret:
@@ -59,25 +65,35 @@ spec:
         }
     }
     stages {
-        stage('build') {
+        stage('image build') {
             steps {
                 container('build') {
-                    sh 'cat /kaniko/ssl/certs/additional-ca-cert-bundle.crt'
-                    sh 'cat /kaniko/.docker/config.json'
-                    sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination $HARBOR_URL/$CI_PROJECT_PATH/test:$BUILD_TAG --no-push'
-                    sh 'pwd'
-                    sh 'ls -al'
+                    sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination $HARBOR_URL/$CI_PROJECT_PATH/test:$BUILD_TAG'
                 }
             }
         }
-        stage('git') {
+        stage('git pull') {
             steps {
                 container('git') {
                     sh 'ssh-keyget -H github.com > /root/.ssh/known_hosts'
-                    sh 'git clone git@github.com:jwhong-3004/gitrepo.git'
                     sh 'chmod 600 /root/.ssh/id_rsa'
                     sh 'git config --global user.name jwhong'
                     sh 'git config --global user.email jwhong@example.com'
+                    sh 'git clone --single-branch -b helm git@github.com:jwhong-3004/helm.git'
+                    sh 'cd helm'
+                    sh 'TAG=$(cat values.yaml | grep -w tag\: |awk '{print $2}')'
+                    sh 'sed -i "s/${TAG}/${BUILD_TAG}/g" values.yaml'
+                    sh 'git add values.yaml && git commit -m "Update image tag" && git push origin helm && cd..'
+                    archiveArtifacts 'helm'
+                    // sh 'yq -i e '.image.tag = "'$BUILD_TAG'"' values.yaml'
+                    // sh 'git add values.yaml && git commit -m "Update image tag" && git push origin main'
+                }
+            }
+        }
+        stage('deploy') {
+            steps {
+                container('helm') {
+                    sh 'helm install -n test --create-namespace test ./helm'
                 }
             }
         }
