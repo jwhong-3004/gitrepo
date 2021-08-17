@@ -33,7 +33,7 @@ spec:
     volumeMounts:
     - name: pri-key
       mountPath: /root/.ssh/
-  - name: git
+  - name: helm
     command:
     - sleep
     args:
