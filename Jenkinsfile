@@ -24,6 +24,12 @@ spec:
       mountPath: /kaniko/ssl/certs/
     - name: dockerjson
       mountPath: /kaniko/.docker/
+  - name: test
+    command:
+    - /bin/sh
+    - -c
+    - sleep 10000
+    image: 10.10.10.149:32002/jwtest/docker:stable
   volumes:
   - name: ca-crt
     secret:
@@ -37,12 +43,6 @@ spec:
       items:
       - key: config.json
         path: "config.json"
-  - name: test
-    command:
-    - /bin/sh
-    - -c
-    - sleep 10000
-    image: 10.10.10.149:32002/jwtest/docker:stable
   imagePullSecrets:
   - name: test2
   nodeName: worker3
