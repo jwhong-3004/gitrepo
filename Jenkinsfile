@@ -24,6 +24,12 @@ spec:
       mountPath: /kaniko/ssl/certs/
     - name: dockerjson
       mountPath: /kaniko/.docker/
+  - name: gradle
+    command:
+    - sleep
+    args:
+    - 99d
+    image: 10.10.10.149:32002/jwtest/gradle:latest
   - name: git
     command:
     - sleep
@@ -65,6 +71,13 @@ spec:
         }
     }
     stages {
+        stage('gradle build') {
+            steps {
+                container('gradle') {
+                    sh 'gradle build'
+                }
+            }
+        }
         stage('image build') {
             steps {
                 container('build') {
