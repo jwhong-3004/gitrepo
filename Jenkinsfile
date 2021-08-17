@@ -29,7 +29,7 @@ spec:
     - sleep
     args:
     - 99d
-    image: 10.10.10.149:32002/jwtest/alpine:git
+    image: 10.10.10.149:32002/jwtest/alpine/git:latest
     volumeMounts:
     - name: pri-key
       mountPath: /root/.ssh/
