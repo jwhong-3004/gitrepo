@@ -82,6 +82,8 @@ spec:
                     sh 'git config --global user.name jwhong'
                     sh 'git config --global user.email jwhong@example.com'
                     sh 'git clone --single-branch -b helm git@github.com:jwhong-3004/helm.git'
+                    sh 'sleep 3'
+                    sh 'ls -l'
                     archiveArtifacts 'helm'
                     // sh 'yq -i e '.image.tag = "'$BUILD_TAG'"' values.yaml'
                     // sh 'git add values.yaml && git commit -m "Update image tag" && git push origin main'
