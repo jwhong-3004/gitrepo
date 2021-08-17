@@ -93,6 +93,7 @@ spec:
         stage('deploy') {
             steps {
                 container('helm') {
+                        sh 'ls -al'
                         sh 'helm install --set image.tag=${BUILD_TAG} -n test --create-namespace test ./helm'
                 }
             }
