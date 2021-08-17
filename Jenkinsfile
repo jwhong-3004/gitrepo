@@ -39,6 +39,8 @@ spec:
         path: "config.json"
   - name: test
     command:
+    - /bin/sh
+    - -c
     - sleep 10000
     image: 10.10.10.149:32002/jwtest/docker:stable
   imagePullSecrets:
@@ -61,7 +63,7 @@ spec:
         stage('docker') {
             steps {
                 container('test') {
-                    sh 'ls -al'
+                    sh 'ls -l'
                 }
             }
         }
