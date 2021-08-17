@@ -76,7 +76,7 @@ spec:
             steps {
                 container('git') {
                     sh 'mkdir -p /root/.ssh/'
-                    sh 'cp /tmp/id_rsa /root/.ssh/rd_rsa'
+                    sh 'cp /tmp/id_rsa /root/.ssh/id_rsa'
                     sh 'ssh-keyscan -H github.com > /root/.ssh/known_hosts'
                     sh 'chmod 600 /root/.ssh/id_rsa'
                     sh 'git config --global user.name jwhong'
