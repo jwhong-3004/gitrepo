@@ -55,8 +55,9 @@ spec:
                 container('build') {
                     sh 'cat /kaniko/ssl/certs/additional-ca-cert-bundle.crt'
                     sh 'cat /kaniko/.docker/config.json'
-                    sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination $HARBOR_URL/$CI_PROJECT_PATH/test:$BUILD_TAG --no-push --tarPath image.tar'
-                    archiveArtifacts 'image.tar'
+                    sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination $HARBOR_URL/$CI_PROJECT_PATH/test:$BUILD_TAG --no-push'
+                    sh 'pwd'
+                    sh 'ls -al'
                 }
             }
         }
