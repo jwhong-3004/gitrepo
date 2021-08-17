@@ -83,8 +83,8 @@ spec:
                     sh 'git config --global user.email jwhong@example.com'
                     sh 'git clone --single-branch -b helm git@github.com:jwhong-3004/helm.git'
                     sh 'sleep 3'
-                    sh 'ls -l'
-                    archiveArtifacts 'helm/**'
+                    sh 'ls -al'
+                    archiveArtifacts 'helm/*'
                     // sh 'yq -i e '.image.tag = "'$BUILD_TAG'"' values.yaml'
                     // sh 'git add values.yaml && git commit -m "Update image tag" && git push origin main'
                 }
@@ -94,7 +94,7 @@ spec:
             steps {
                 container('helm') {
                         sh 'ls -al'
-                        sh 'helm install --set image.tag=${BUILD_TAG} -n test --create-namespace test ./helm'
+                        sh 'helm upgrade install --set image.tag=${BUILD_TAG} -n test --create-namespace test ./helm'
                 }
             }
         }
