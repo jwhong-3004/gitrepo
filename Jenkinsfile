@@ -32,7 +32,7 @@ spec:
     image: 10.10.10.149:32002/jwtest/alpine/git:latest
     volumeMounts:
     - name: pri-key
-      mountPath: /root/.ssh/
+      mountPath: /tmp/
   - name: helm
     command:
     - sleep
@@ -75,7 +75,9 @@ spec:
         stage('git pull') {
             steps {
                 container('git') {
-                    sh 'ssh-keyget -H github.com > /root/.ssh/known_hosts'
+                    sh 'mkdir -p /root/.ssh/'
+                    sh 'cp /tmp/id_rsa /root/.ssh/rd_rsa'
+                    sh 'ssh-keyscan -H github.com > /root/.ssh/known_hosts'
                     sh 'chmod 600 /root/.ssh/id_rsa'
                     sh 'git config --global user.name jwhong'
                     sh 'git config --global user.email jwhong@example.com'
