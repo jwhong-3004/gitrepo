@@ -84,7 +84,8 @@ spec:
                     sh 'git clone --single-branch -b helm git@github.com:jwhong-3004/helm.git'
                     sh '''cd helm
                     TAG=$(cat values.yaml | grep -w tag: |awk '{print $2}')'''
-                    sh 'sed -i "s/${TAG}/${BUILD_TAG}/g" values.yaml'
+                    sh 'echo \$TAG'
+                    sh 'sed -i "s/\${TAG}/${BUILD_TAG}/g" values.yaml'
                     sh '''git add values.yaml
                     git commit -m "Update image tag"
                     git push origin helm && cd..'''
