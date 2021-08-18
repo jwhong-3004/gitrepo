@@ -36,7 +36,7 @@ if (path.includes('favicon')){
    if (status == 500){
      resp.end(os.hostname() + " : Internal Server Error" + "\n");
    } else {
-     resp.end(os.hostname() + " is Running" + "\n");
+     resp.end(os.hostname() + " is OK" + "\n");
    }
 
 } else if (path.includes('status')){
