@@ -8,7 +8,7 @@ environment {
     }
     agent {
         kubernetes {
-                        env.MYTOOL_VERSION = '1.33'
+            env.MYTOOL_VERSION = '1.33'
             yaml '''
 apiVersion: v1
 kind: Pod
