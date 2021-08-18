@@ -2,13 +2,11 @@
 pipeline {
 environment {
         HARBOR_URL      = "10.10.10.149:32002"
+        env.URL         = "10.10.10.149:32002"
         HARBOR_USER     = "admin"
         HARBOR_PASSWORD = "Kuberix1234@#\$"
         CI_PROJECT_PATH = "jwtest"
     }
-script{
-                env.image_name = "busybox"
-            }
     agent {
         kubernetes {
             yaml '''
@@ -21,7 +19,7 @@ spec:
     - sleep
     args:
     - 99d
-    image: "${env.image_name}"
+    image: ${URL}/jwtest/kaniko-project/executor:debug
     volumeMounts:
     - name: ca-crt
       mountPath: /kaniko/ssl/certs/
