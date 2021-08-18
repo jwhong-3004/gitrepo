@@ -18,7 +18,7 @@ spec:
     - sleep
     args:
     - 99d
-    image: ${HARBOR}/jwtest/kaniko-project/executor:debug
+    image: $HARBOR/jwtest/kaniko-project/executor:debug
     volumeMounts:
     - name: ca-crt
       mountPath: /kaniko/ssl/certs/
