@@ -30,15 +30,6 @@ spec:
     args:
     - 99d
     image: 10.10.10.149:32002/jwtest/gradle:7.1.1
-  - name: git
-    command:
-    - sleep
-    args:
-    - 99d
-    image: 10.10.10.149:32002/jwtest/alpine/git:latest
-    volumeMounts:
-    - name: pri-key
-      mountPath: /tmp/
   - name: helm
     command:
     - sleep
@@ -48,24 +39,18 @@ spec:
   volumes:
   - name: ca-crt
     secret:
-      secretName: pipesecret
+      secretName: registry-cert
       items:
       - key: additional-ca-cert-bundle.crt
         path: "additional-ca-cert-bundle.crt"
   - name: dockerjson
     secret:
-      secretName: pipesecret
+      secretName: registry-cert
       items:
       - key: config.json
         path: "config.json"
-  - name: pri-key
-    secret:
-      secretName: pipesecret
-      items:
-      - key: "id_rsa"
-        path: "id_rsa"
   imagePullSecrets:
-  - name: test2
+  - name: harbor-cred
   nodeName: worker3
 '''
         }
