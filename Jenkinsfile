@@ -34,5 +34,12 @@ pipeline {
         }
       }
     }
+    stage('image build') {
+        steps {
+            container('busybox') {
+              sh 'echo ${env.image_name}'
+            }
+        }
+    }
   }
 }
