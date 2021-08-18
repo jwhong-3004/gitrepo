@@ -1,4 +1,5 @@
 pipeline {
+env.MYTOOL_VERSION = '1.33'
   agent none
   stages {
     stage("Build image"){
@@ -32,6 +33,7 @@ pipeline {
         container('busybox') {
           sh 'echo "I am alive!!"'
           sh 'echo ${HARBOR}'
+          sh 'echo ${MYTOOL_VERSION}'
         }
       }
     }
