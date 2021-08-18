@@ -29,7 +29,7 @@ spec:
     - sleep
     args:
     - 99d
-    image: 10.10.10.149:32002/jwtest/gradle:latest
+    image: 10.10.10.149:32002/jwtest/gradle:7.1.1
   - name: git
     command:
     - sleep
