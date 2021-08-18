@@ -19,7 +19,7 @@ spec:
     - sleep
     args:
     - 99d
-    image: ${URL}/jwtest/kaniko-project/executor:debug
+    image: ${env.URL}/jwtest/kaniko-project/executor:debug
     volumeMounts:
     - name: ca-crt
       mountPath: /kaniko/ssl/certs/
