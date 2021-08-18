@@ -32,3 +32,7 @@ pipeline {
         container('busybox') {
           sh 'echo "I am alive!!"'
         }
+      }
+    }
+  }
+}
