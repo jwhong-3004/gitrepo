@@ -71,10 +71,10 @@ spec:
         }
     }
     stages {
-        stage('gradle build') {
+        stage('source build') {
             steps {
                 container('gradle') {
-                    sh 'gradle build'
+                    sh 'echo "source build"'
                 }
             }
         }
