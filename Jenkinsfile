@@ -8,7 +8,6 @@ environment {
     }
     agent {
         kubernetes {
-            env.MYTOOL_VERSION = '1.33'
             yaml '''
 apiVersion: v1
 kind: Pod
@@ -19,7 +18,7 @@ spec:
     - sleep
     args:
     - 99d
-    image: ${MYTOOL_VERSION}/jwtest/kaniko-project/executor:debug
+    image: ${HARBOR}/jwtest/kaniko-project/executor:debug
     volumeMounts:
     - name: ca-crt
       mountPath: /kaniko/ssl/certs/
