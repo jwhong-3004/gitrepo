@@ -1,116 +1,34 @@
-// Uses Declarative syntax to run commands inside a container.
 pipeline {
-environment {
-        HARBOR_URL      = "10.10.10.149:32002"
-        env.URL         = "10.10.10.149:32002"
-        HARBOR_USER     = "admin"
-        HARBOR_PASSWORD = "Kuberix1234@#\$"
-        CI_PROJECT_PATH = "jwtest"
+  agent none
+  stages {
+    stage("Build image"){
+        // some script that builds the image
+        steps{
+            script{
+                env.image_name = "busybox"
+            }
+        }
     }
-    agent {
+    stage('Run tests') {
+      agent {
         kubernetes {
-            yaml '''
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: build
-    command:
-    - sleep
-    args:
-    - 99d
-    image: ${env.URL}/jwtest/kaniko-project/executor:debug
-    volumeMounts:
-    - name: ca-crt
-      mountPath: /kaniko/ssl/certs/
-    - name: dockerjson
-      mountPath: /kaniko/.docker/
-  - name: gradle
-    command:
-    - sleep
-    args:
-    - 99d
-    image: 10.10.10.149:32002/jwtest/gradle:7.1.1
-  - name: git
-    command:
-    - sleep
-    args:
-    - 99d
-    image: 10.10.10.149:32002/jwtest/alpine/git:latest
-    volumeMounts:
-    - name: pri-key
-      mountPath: /tmp/
-  - name: helm
-    command:
-    - sleep
-    args:
-    - 99d
-    image: 10.10.10.149:32002/jwtest/alpine/helm:latest
-  volumes:
-  - name: ca-crt
-    secret:
-      secretName: registry-cert
-      items:
-      - key: additional-ca-cert-bundle.crt
-        path: "additional-ca-cert-bundle.crt"
-  - name: dockerjson
-    secret:
-      secretName: registry-cert
-      items:
-      - key: config.json
-        path: "config.json"
-  - name: pri-key
-    secret:
-      secretName: registry-cert
-      items:
-      - key: "id_rsa"
-        path: "id_rsa"
-  imagePullSecrets:
-  - name: harbor-cred
-  nodeName: worker3
-'''
+          yaml """\
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          labels:
+            some-label: some-label-value
+        spec:
+          containers:
+          - name: busybox
+            image: "${env.image_name}"
+            command:
+            - cat
+            tty: true
+        """.stripIndent()
         }
-    }
-    stages {
-        stage('source build') {
-            steps {
-                container('gradle') {
-                    sh 'echo "source build"'
-                }
-            }
+      }
+      steps {
+        container('busybox') {
+          sh 'echo "I am alive!!"'
         }
-        stage('image build') {
-            steps {
-                container('build') {
-                    sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination $HARBOR_URL/$CI_PROJECT_PATH/test:$BUILD_TAG'
-                }
-            }
-        }
-        stage('git pull') {
-            steps {
-                container('git') {
-                    sh 'mkdir -p /root/.ssh/'
-                    sh 'cp /tmp/id_rsa /root/.ssh/id_rsa'
-                    sh 'ssh-keyscan -H github.com > /root/.ssh/known_hosts'
-                    sh 'chmod 600 /root/.ssh/id_rsa'
-                    sh 'git config --global user.name jwhong'
-                    sh 'git config --global user.email jwhong@example.com'
-                    sh 'git clone --single-branch -b helm git@github.com:jwhong-3004/helm.git'
-                    sh 'sleep 3'
-                    sh 'ls -al'
-                    // archiveArtifacts 'helm/**'
-                    // sh 'yq -i e '.image.tag = "'$BUILD_TAG'"' values.yaml'
-                    // sh 'git add values.yaml && git commit -m "Update image tag" && git push origin main'
-                }
-            }
-        }
-        stage('deploy') {
-            steps {
-                container('helm') {
-                        sh 'ls -al'
-                        sh 'helm upgrade --install --set image.tag=${BUILD_TAG} -n test --create-namespace test ./helm'
-                }
-            }
-        }
-    }            
-}
