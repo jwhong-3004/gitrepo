@@ -31,15 +31,9 @@ pipeline {
       steps {
         container('busybox') {
           sh 'echo "I am alive!!"'
+          sh 'echo ${HARBOR}'
         }
       }
-    }
-    stage('image build') {
-        steps {
-            container('busybox') {
-              sh 'echo ${env.image_name}'
-            }
-        }
     }
   }
 }
