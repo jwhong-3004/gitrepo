@@ -7,8 +7,8 @@ environment {
         CI_PROJECT_PATH = "jwtest"
     }
     agent {
-      env.MYTOOL_VERSION = '1.33'
         kubernetes {
+                        env.MYTOOL_VERSION = '1.33'
             yaml '''
 apiVersion: v1
 kind: Pod
