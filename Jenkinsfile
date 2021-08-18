@@ -6,6 +6,9 @@ environment {
         HARBOR_PASSWORD = "Kuberix1234@#\$"
         CI_PROJECT_PATH = "jwtest"
     }
+script{
+                env.image_name = "busybox"
+            }
     agent {
         kubernetes {
             yaml '''
@@ -18,7 +21,7 @@ spec:
     - sleep
     args:
     - 99d
-    image: 10.10.10.149:32002/jwtest/kaniko-project/executor:debug
+    image: "${env.image_name}"
     volumeMounts:
     - name: ca-crt
       mountPath: /kaniko/ssl/certs/
@@ -48,24 +51,24 @@ spec:
   volumes:
   - name: ca-crt
     secret:
-      secretName: pipesecret
+      secretName: registry-cert
       items:
       - key: additional-ca-cert-bundle.crt
         path: "additional-ca-cert-bundle.crt"
   - name: dockerjson
     secret:
-      secretName: pipesecret
+      secretName: registry-cert
       items:
       - key: config.json
         path: "config.json"
   - name: pri-key
     secret:
-      secretName: pipesecret
+      secretName: registry-cert
       items:
       - key: "id_rsa"
         path: "id_rsa"
   imagePullSecrets:
-  - name: test2
+  - name: harbor-cred
   nodeName: worker3
 '''
         }
