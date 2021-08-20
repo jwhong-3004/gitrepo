@@ -1,15 +1,16 @@
 pipeline {
   agent none
   stages {
-    stage("Build image"){
-        // some script that builds the image
+    stage("Environment Setting"){
         steps{
             script{
-                env.image_name = "10.10.10.149:32002"
+                env.HARBOR_URL = "10.10.10.149:32002"
+                env.CI_PROJECT_PATH = "jwtest"
+                env.APP_NAME= "test"
             }
         }
     }
-    stage('Run tests') {
+    stage('Source build') {
       agent {
         kubernetes {                                                                                   
           yaml """\
@@ -18,17 +19,42 @@ pipeline {
         metadata:
         spec:
           containers:
-          - name: busybox
-            image: ${env.image_name}/library/gradle:7.1.1
+          - name: gradle
+            image: ${env.HARBOR_URL}/library/gradle:7.1.1
             command:
             - cat
             tty: true
-          - name: gradle
+          imagePullSecrets:
+          - name: harbor-cred
+        """.stripIndent()
+        }
+      }
+      steps {
+        container('gradle') {
+          sh 'echo "I am alive!!"'
+        }
+      }
+    }
+    stage('Image build') {
+      agent {
+        kubernetes {                                                                                   
+          yaml """\
+        apiVersion: v1
+        kind: Pod
+        metadata:
+        spec:
+          containers:
+          - name: kaniko
             command:
             - sleep
             args:
             - 99d
-            image: 10.10.10.149:32002/library/alpine/helm:latest
+            image: ${env.HARBOR_URL}/library/kaniko-project/executor:debug
+            volumeMounts:
+            - name: cacrt
+              mountPath: /kaniko/ssl/certs/
+            - name: dockerconfigjson
+              mountPath: /kaniko/.docker/
           volumes:
           - name: cacrt
             secret:
@@ -46,17 +72,36 @@ pipeline {
           - name: harbor-cred
         """.stripIndent()
         }
-      }
+      }     
       steps {
-        container('busybox') {
-          sh 'echo "I am alive!!"'
+        container('kaniko') {
+          sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination ${env.HARBOR_URL}/${CI_PROJECT_PATH}/$APP_NAME:$BUILD_TAG'
         }
       }
     }
-    stage('Run tests2') {
+    stage('Deploy') {
+      agent {
+        kubernetes {                                                                                   
+          yaml """\
+        apiVersion: v1
+        kind: Pod
+        metadata:
+        spec:
+          containers:
+          - name: helm
+            command:
+            - sleep
+            args:
+            - 99d
+            image: ${env.HARBOR_URL}/library/alpine/helm:latest
+          imagePullSecrets:
+          - name: harbor-cred
+        """.stripIndent()
+        }
+      }     
       steps {
-        container('gradle') {
-          sh 'echo "I am alive2!!"'
+        container('helm') {
+          sh 'helm upgrade --install --set image.tag=${BUILD_TAG} -n $APP_NAME --create-namespace $APP_NAME ./helm-deploy/helm'
         }
       }
     }
