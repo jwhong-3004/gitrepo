@@ -31,6 +31,21 @@ pipeline {
             args:
             - 99d
             image: 10.10.10.149:32002/library/alpine/helm:latest
+          volumes:
+          - name: cacrt
+            secret:
+              secretName: registry-cert
+              items:
+              - key: additional-ca-cert-bundle.crt
+                path: "additional-ca-cert-bundle.crt"
+          - name: dockerconfigjson
+            secret:
+              secretName: registry-cert
+              items:
+              - key: config.json
+                path: "config.json"
+          imagePullSecrets:
+          - name: harbor-cred
         """.stripIndent()
         }
       }
