@@ -16,12 +16,10 @@ pipeline {
         apiVersion: v1
         kind: Pod
         metadata:
-          labels:
-            some-label: some-label-value
         spec:
           containers:
           - name: busybox
-            image: "${env.image_name}"/library/gradle:7.1.1
+            image: ${env.image_name}/library/gradle:7.1.1
             command:
             - cat
             tty: true
