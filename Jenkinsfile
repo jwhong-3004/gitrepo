@@ -9,30 +9,30 @@ pipeline {
             }
         }
     }
-    agent {
-      kubernetes {                                                                                   
-        yaml """\
-      apiVersion: v1
-      kind: Pod
-      metadata:
-        labels:
-          some-label: some-label-value
-      spec:
-        containers:
-        - name: busybox
-          image: "${env.image_name}"/library/gradle:7.1.1
-          command:
-          - cat
-          tty: true
-        - name: gradle
-          command:
-          - sleep
-          args:
-          - 99d
-          image: 10.10.10.149:32002/library/alpine/helm:latest
-      """.stripIndent()
-      }
+  agent {
+    kubernetes {                                                                                   
+      yaml """\
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      labels:
+        some-label: some-label-value
+    spec:
+      containers:
+      - name: busybox
+        image: "${env.image_name}"/library/gradle:7.1.1
+        command:
+        - cat
+        tty: true
+      - name: gradle
+        command:
+        - sleep
+        args:
+        - 99d
+        image: 10.10.10.149:32002/library/alpine/helm:latest
+    """.stripIndent()
     }
+  }
     stage('Run tests') {
       steps {
         container('busybox') {
