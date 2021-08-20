@@ -32,7 +32,7 @@ pipeline {
       steps {
         container('gradle') {
           sh 'echo "I am alive!!"'
-          sh 'echo ${env.APP_NAME}'
+          sh 'echo ${APP_NAME}'
         }
       }
     }
