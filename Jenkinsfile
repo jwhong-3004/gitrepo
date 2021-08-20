@@ -32,6 +32,7 @@ pipeline {
       steps {
         container('gradle') {
           sh 'echo "I am alive!!"'
+          sh 'echo ${env.APP_NAME}'
         }
       }
     }
@@ -101,7 +102,7 @@ pipeline {
       }     
       steps {
         container('helm') {
-          sh 'helm upgrade --install --set image.tag=${BUILD_TAG} -n test --create-namespace test ./helm-deploy/helm'
+          sh 'helm upgrade --install --set image.tag=${BUILD_TAG} -n test --create-namespace test ./helm-helm/helm'
         }
       }
     }
