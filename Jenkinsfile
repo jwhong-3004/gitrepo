@@ -75,7 +75,7 @@ pipeline {
       }     
       steps {
         container('kaniko') {
-          sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination ${env.HARBOR_URL}/${CI_PROJECT_PATH}/$APP_NAME:$BUILD_TAG'
+          sh '/kaniko/executor --context ./ --dockerfile ./dockerfile --destination ${env.HARBOR_URL}/${CI_PROJECT_PATH}/${APP_NAME}:$BUILD_TAG'
         }
       }
     }
@@ -101,7 +101,7 @@ pipeline {
       }     
       steps {
         container('helm') {
-          sh 'helm upgrade --install --set image.tag=${BUILD_TAG} -n $APP_NAME --create-namespace $APP_NAME ./helm-deploy/helm'
+          sh 'helm upgrade --install --set image.tag=${BUILD_TAG} -n ${APP_NAME} --create-namespace ${APP_NAME} ./helm-deploy/helm'
         }
       }
     }
