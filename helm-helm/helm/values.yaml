@@ -26,7 +26,7 @@ deployment:
 
 ingress:
   ## Set to true to enable ingress record generation
-  enabled: false
+  enabled: true
   ## Set this to true in order to add the corresponding annotations for cert-manager
   certManager: false
 
@@ -45,9 +45,11 @@ ingress:
   - name: samsung.dev.gantry.ai
     path: /
 
-    tls: false
+    tls: true
+    tlsHosts:
+    - samsung.dev.gantry.ai
 
-    tlsSecret: ghost.local-tls
+    tlsSecret: secret-https
 
   secrets:
 
