@@ -1,0 +1,13 @@
+{
+  "name": "node_project",
+  "version": "0.0.1",
+  "description": "NodeJS on Docker",
+  "author": "DevOps Group",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.1"
+  }
+}
